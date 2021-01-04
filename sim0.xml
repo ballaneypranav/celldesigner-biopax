@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:celldesigner="http://www.sbml.org/2001/ns/celldesigner"
+      level="2" version="4">
+    <model>
+        <listOfCompartments>
+            <compartment metaid="default" id="default" size="1" units="volume"/>
+        </listOfCompartments>
+        <listOfSpecies>
+            <species metaid="s1" id="s1" name="A" compartment="default">
+            </species>
+            <species metaid="s2" id="s2" name="B" compartment="default">
+            </species>
+        </listOfSpecies>
+    </model>
+</sbml>

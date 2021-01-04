@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns="http://www.pantherdb.org/pathways/biopax#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#"
+ xml:base="http://www.pantherdb.org/pathways/biopax#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:CellularLocationVocabulary rdf:ID="__default_">
+ <bp:comment rdf:datatype = "xsd:string">_</bp:comment>
+</bp:CellularLocationVocabulary>
+
+<bp:Stoichiometry rdf:ID="_A_s1_sa0__STOICHIOMETRY_ID">
+ <bp:physicalEntity rdf:resource="#_A_s1_sa0_" />
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+</bp:Stoichiometry>
+
+<bp:Stoichiometry rdf:ID="_B_s2_sa1__STOICHIOMETRY_ID">
+ <bp:physicalEntity rdf:resource="#_B_s2_sa1_" />
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+</bp:Stoichiometry>
+
+<bp:Protein rdf:ID="_A_s1_sa0_">
+ <bp:displayName rdf:datatype = "xsd:string">A</bp:displayName>
+ <bp:cellularLocation rdf:resource="#__default_" />
+ <bp:standardName rdf:datatype = "xsd:string">A</bp:standardName>
+</bp:Protein>
+
+<bp:SmallMolecule rdf:ID="_s3_s3_sa3_">
+ <bp:displayName rdf:datatype = "xsd:string">s3</bp:displayName>
+ <bp:cellularLocation rdf:resource="#__default_" />
+ <bp:standardName rdf:datatype = "xsd:string">s3</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:Pathway rdf:ID="_">
+</bp:Pathway>
+
+<bp:Stoichiometry rdf:ID="_s3_s3_sa3__STOICHIOMETRY_ID">
+ <bp:physicalEntity rdf:resource="#_s3_s3_sa3_" />
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+</bp:Stoichiometry>
+
+<bp:Protein rdf:ID="_B_s2_sa1_">
+ <bp:displayName rdf:datatype = "xsd:string">B</bp:displayName>
+ <bp:cellularLocation rdf:resource="#__default_" />
+ <bp:standardName rdf:datatype = "xsd:string">B</bp:standardName>
+</bp:Protein>
+</rdf:RDF>
