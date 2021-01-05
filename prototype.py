@@ -17,6 +17,10 @@ def main():
     cache['compartments'] = getCompartments(tree)
     cache['species'] = getSpecies(tree)
     cache['reactions'] = getReactions(tree)
+    cache['vocabularies'] = {
+        'RelationshipTypes': {},
+        'Interactions': {}
+    }
 
     pprint(cache)
 
@@ -24,6 +28,8 @@ def main():
 
     addCellularLocationVocabularies(owl, cache)
     addProteins(owl, cache)
+    addSmallMolecules(owl, cache)
+    processReactions(owl, cache)
 
     owl_string = str(etree.tostring(owl, pretty_print=True), encoding='UTF8')
     print(owl_string)
@@ -123,24 +129,56 @@ def getReactions(tree):
         reactionType = rxn.findall('.//celldesigner:reactionType', tree.nsmap)[0]
 
         loBaseReactants = rxn.findall('.//celldesigner:baseReactants', tree.nsmap)[0]
-        baseReactants = []
+        baseReactants = {}
 
         for reactant in loBaseReactants.getchildren():
-            baseReactants.append({
-                'species': reactant.get('species'),
-                'alias': reactant.get('alias')
-            })
+            species = reactant.get('species')
+            alias = reactant.get('alias')
+
+            baseReactants[alias] = {
+                'species': species
+            }
+
+        loReactants = rxn.findall('.//listOfReactants', tree.nsmap)[0]
+        reactants = {}
+
+        for reactant in loReactants.getchildren():
+            species = reactant.get('species')
+            stoichiometry = reactant.get('stoichiometry')
+            alias = reactant.findall('.//celldesigner:alias', tree.nsmap)[0].text
+
+            reactants[alias] = {
+                'species': species,
+                'stoichiometry': stoichiometry
+            }
 
         loBaseProducts = rxn.findall('.//celldesigner:baseProducts', tree.nsmap)[0]
-        baseProducts = []
+        baseProducts = {}
 
         for product in loBaseProducts.getchildren():
-            baseProducts.append({
-                'species': product.get('species'),
-                'alias': product.get('alias')
-            })
+            species = product.get('species')
+            alias = product.get('alias')
 
+            baseProducts[alias] = {
+                'species': species
+            }
+
+        loProducts = rxn.findall('.//listOfProducts', tree.nsmap)[0]
+        products = {}
+
+        for product in loProducts.getchildren():
+            species = product.get('species')
+            stoichiometry = product.get('stoichiometry')
+            alias = product.findall('.//celldesigner:alias', tree.nsmap)[0].text
+
+            products[alias] = {
+                'species': species,
+                'stoichiometry': stoichiometry
+            }
+            
         connectPolicy = rxn.findall('.//celldesigner:connectScheme', tree.nsmap)[0].get('connectPolicy')
+
+
         
         reactions[id] = {
             'metaid': metaid,
@@ -149,6 +187,8 @@ def getReactions(tree):
             'reactionType': reactionType,
             'baseReactants': baseReactants,
             'baseProducts': baseProducts,
+            'reactants': reactants,
+            'products': products,
             'connectPolicy': connectPolicy
         }
 
@@ -156,6 +196,9 @@ def getReactions(tree):
 
 def getElement(name, namespace):
     return etree.Element('{' + namespace + '}' + name)
+
+def addAttr(element, namespace, attr, value):
+    element.set('{' + namespace + '}' + attr, value)
 
 def getOwlModel():
     owl_nsmap = {
@@ -173,7 +216,7 @@ def getOwlModel():
 
     owl.append(ontology)
     imports = getElement('imports', OWL)
-    imports.set("{%s}resource" % RDF, BP)
+    addAttr(imports, RDF, 'resource', BP)
     ontology.append(imports)
 
     return owl
@@ -183,7 +226,7 @@ def addCellularLocationVocabularies(owl, cache):
 
     for key, value in compartments.items():
         cellularLocationVocabulary = getElement('CellularLocationVocabulary', BP)
-        cellularLocationVocabulary.set("{%s}ID" % RDF, key)
+        addAttr(cellularLocationVocabulary, RDF, 'ID', key)
 
         owl.append(cellularLocationVocabulary)
 
@@ -202,25 +245,156 @@ def addProteins(owl, cache):
                 desc['speciesAliasID'] = alias
                 break
 
-        desc['rdf:ID'] = desc['name'] + '_' + desc['speciesID'] + '_' + desc['speciesAliasID']
-
         protein = getElement('Protein', BP)
-        protein.set("{%s}ID" % RDF, desc['rdf:ID'])
+        addAttr(protein, RDF, 'ID', desc['speciesAliasID'])
 
         displayName = getElement('displayName', BP)
         displayName.text = cache['proteins'][proteinReference]['name']
-        displayName.set("{%s}datatype" % RDF, "xsd:string")
+        addAttr(displayName, RDF, 'datatype', 'xsd:string')
         protein.append(displayName)
 
         standardName = getElement('standardName', BP)
         standardName.text = cache['proteins'][proteinReference]['name']
-        standardName.set("{%s}datatype" % RDF, "xsd:string")
+        addAttr(standardName, RDF, 'datatype', 'xsd:string')
         protein.append(standardName)
 
         cellularLocation = getElement('cellularLocation', BP)
-        cellularLocation.set("{%s}resource" % RDF, '#' + desc['compartment'])
+        addAttr(cellularLocation, RDF, 'resource', desc['compartment'])
         protein.append(cellularLocation)
 
         owl.append(protein)
+
+def addSmallMolecules(owl, cache):
+    for spID, spDesc in cache['species'].items():
+        if spDesc['class'] == 'SIMPLE_MOLECULE':
+            
+            # consolidate data from cache
+            for aliasID, aliasDesc in cache['speciesAliases'].items():
+                if aliasDesc['species'] == spID:
+                    spDesc['speciesAliasID'] = aliasID
+                    break
+
+            SmallMolecule = getElement('SmallMolecule', BP)
+            addAttr(SmallMolecule, RDF, 'ID', spDesc['speciesAliasID'])
+            
+
+            displayName = getElement('displayName', BP)
+            addAttr(displayName, RDF, 'datatype', 'xsd:string')
+            displayName.text = spDesc['name']
+            SmallMolecule.append(displayName)
+
+            standardName = getElement('standardName', BP)
+            addAttr(standardName, RDF, 'datatype', 'xsd:string')
+            standardName.text = spDesc['name']
+            SmallMolecule.append(standardName)
+
+            cellularLocation = getElement('cellularLocation', BP)
+            addAttr(cellularLocation, RDF, 'resource', '#' + spDesc['compartment'])
+            SmallMolecule.append(cellularLocation)
+
+            owl.append(SmallMolecule)
+
+def processReactions(owl, cache):
+    for rxnID, rxnDesc in cache['reactions'].items():
+
+        # add Interaction to vocab if not present
+        if rxnDesc['reactionType'] not in cache['vocabularies']['Interactions'].keys():
+            InteractionVocabulary = getElement('InteractionVocabulary', BP)
+            addAttr(InteractionVocabulary, RDF, 'about', 'CELLDESIGNER_INTERACTION_VOCABULARY=' + rxnDesc['reactionType'])
+
+            term = getElement('term', BP)
+            addAttr(term, RDF, 'datatype', 'xsd:string')
+            term.text = str(rxnDesc['reactionType'])
+            InteractionVocabulary.append(term)
+
+            owl.append(InteractionVocabulary)
+            cache['vocabularies']['Interactions'][rxnDesc['reactionType']] = {
+                'rdf:about': 'CELLDESIGNER_INTERACTION_VOCABULARY=' + rxnDesc['reactionType'],
+                'term': rxnDesc['reactionType']
+            }
+
+        # add reaction
+        BiochemicalReaction = getElement('BiochemicalReaction', BP)
+        addAttr(BiochemicalReaction, RDF, 'ID', rxnID)
+
+        # left
+        reactantID = list(rxnDesc['reactants'].keys())[0]
+        left = getElement('left', BP)
+        addAttr(left, RDF, 'resource', '#' + reactantID)
+        BiochemicalReaction.append(left)
+
+        # right
+        productID = list(rxnDesc['products'].keys())[0]
+        right = getElement('right', BP)
+        addAttr(right, RDF, 'resource', '#' + productID)
+        BiochemicalReaction.append(right)
+
+        # standardName
+        standardName = getElement('standardName', BP)
+        addAttr(standardName, RDF, 'datatype', 'xsd:string')
+        standardName.text = rxnID
+        BiochemicalReaction.append(standardName)
+
+        # interactionType
+        interactionType = getElement('interactionType', BP)
+        addAttr(interactionType, RDF, 'resource', 'CELLDESIGNER_INTERACTION_VOCABULARY=' + rxnDesc['reactionType'])
+        BiochemicalReaction.append(interactionType)
+
+        # conversionDirection
+        conversionDirection = getElement('conversionDirection', BP)
+        addAttr(conversionDirection, RDF, 'datatype', 'xsd:string')
+        if rxnDesc['reversible'] == 'false':
+            conversionDirection.text = 'LEFT_TO_RIGHT'
+        else:
+            conversionDirection.text = 'REVERSIBLE'
+        BiochemicalReaction.append(conversionDirection)
+
+        # reactant stoichiometry
+        reactantSty = getElement('Stoichiometry', BP)
+        addAttr(reactantSty, RDF, 'ID', 'PARTICIPANT_STOICHIOMETRY_' + rxnID + '_1')
+
+        reactantEntity = getElement('physicalEntity', BP)
+        addAttr(reactantEntity, RDF, 'resource', '#' + reactantID)
+        reactantSty.append(reactantEntity)
+
+        reactantStyCoeff = getElement('stoichiometricCoefficient', BP)
+        addAttr(reactantStyCoeff, BP, 'datatype', 'xsd:float')
+        reactantStyValue = rxnDesc['reactants'][reactantID]['stoichiometry']
+        if reactantStyValue is None:
+            reactantStyCoeff.text = '1.0'
+        else:
+            reactantStyCoeff.text = reactantStyValue
+
+        reactantSty.append(reactantStyCoeff)  
+        owl.append(reactantSty)
+
+        reactantPartSty = getElement('participantStoichiometry', BP)
+        addAttr(reactantPartSty, RDF, 'resource', '#' + 'PARTICIPANT_STOICHIOMETRY_' + rxnID + '_1')
+        BiochemicalReaction.append(reactantPartSty)
+
+        # product stoichiometry
+        productSty = getElement('Stoichiometry', BP)
+        addAttr(productSty, RDF, 'ID', 'PARTICIPANT_STOICHIOMETRY_' + rxnID + '_2')
+
+        productEntity = getElement('physicalEntity', BP)
+        addAttr(productEntity, RDF, 'resource', '#' + productID)
+        productSty.append(productEntity)
+
+        productStyCoeff = getElement('stoichiometricCoefficient', BP)
+        addAttr(productStyCoeff, BP, 'datatype', 'xsd:float')
+        productStyValue = rxnDesc['products'][productID]['stoichiometry']
+        if productStyValue is None:
+            productStyCoeff.text = '1.0'
+        else:
+            productStyCoeff.text = productStyValue
+
+        productSty.append(productStyCoeff)  
+        owl.append(productSty)
+
+        productPartSty = getElement('participantStoichiometry', BP)
+        addAttr(productPartSty, RDF, 'resource', '#' + 'PARTICIPANT_STOICHIOMETRY_' + rxnID + '_2')
+        BiochemicalReaction.append(productPartSty)
+
+        owl.append(BiochemicalReaction)
 
 main()

@@ -3,14 +3,39 @@
     <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#"/>
   </owl:Ontology>
   <bp:CellularLocationVocabulary rdf:ID="default"/>
-  <bp:Protein rdf:ID="A_s1_sa1">
+  <bp:Protein rdf:ID="sa1">
     <bp:displayName rdf:datatype="xsd:string">A</bp:displayName>
     <bp:standardName rdf:datatype="xsd:string">A</bp:standardName>
-    <bp:cellularLocation rdf:resource="#default"/>
+    <bp:cellularLocation rdf:resource="default"/>
   </bp:Protein>
-  <bp:Protein rdf:ID="B_s2_sa2">
+  <bp:Protein rdf:ID="sa2">
     <bp:displayName rdf:datatype="xsd:string">B</bp:displayName>
     <bp:standardName rdf:datatype="xsd:string">B</bp:standardName>
-    <bp:cellularLocation rdf:resource="#default"/>
+    <bp:cellularLocation rdf:resource="default"/>
   </bp:Protein>
+  <bp:SmallMolecule rdf:ID="sa3">
+    <bp:displayName rdf:datatype="xsd:string">s3</bp:displayName>
+    <bp:standardName rdf:datatype="xsd:string">s3</bp:standardName>
+    <bp:cellularLocation rdf:resource="#default"/>
+  </bp:SmallMolecule>
+  <bp:InteractionVocabulary rdf:about="CELLDESIGNER_INTERACTION_VOCABULARY=STATE_TRANSITION">
+    <bp:term rdf:datatype="xsd:string">STATE_TRANSITION</bp:term>
+  </bp:InteractionVocabulary>
+  <bp:Stoichiometry rdf:ID="PARTICIPANT_STOICHIOMETRY_re1_1">
+    <bp:physicalEntity rdf:resource="#sa1"/>
+    <bp:stoichiometricCoefficient bp:datatype="xsd:float">1.0</bp:stoichiometricCoefficient>
+  </bp:Stoichiometry>
+  <bp:Stoichiometry rdf:ID="PARTICIPANT_STOICHIOMETRY_re1_2">
+    <bp:physicalEntity rdf:resource="#sa2"/>
+    <bp:stoichiometricCoefficient bp:datatype="xsd:float">1.0</bp:stoichiometricCoefficient>
+  </bp:Stoichiometry>
+  <bp:BiochemicalReaction rdf:ID="re1">
+    <bp:left rdf:resource="#sa1"/>
+    <bp:right rdf:resource="#sa2"/>
+    <bp:standardName rdf:datatype="xsd:string">re1</bp:standardName>
+    <bp:interactionType rdf:resource="CELLDESIGNER_INTERACTION_VOCABULARY=STATE_TRANSITION"/>
+    <bp:conversionDirection rdf:datatype="xsd:string">LEFT_TO_RIGHT</bp:conversionDirection>
+    <bp:participantStoichiometry rdf:resource="#PARTICIPANT_STOICHIOMETRY_re1_1"/>
+    <bp:participantStoichiometry rdf:resource="#PARTICIPANT_STOICHIOMETRY_re1_2"/>
+  </bp:BiochemicalReaction>
 </rdf:RDF>
