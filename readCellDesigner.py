@@ -1,27 +1,15 @@
+
 from lxml import objectify
 from lxml import etree
-from pprint import pprint
-
-def main():
-
-    with open('sim1.xml', 'rb') as file:
-        tree = objectify.fromstring(file.read())
-
-    cache = {}
-    cache['speciesAliases'] = getSpeciesAliases(tree)
-    cache['proteins'] = getProteins(tree)
-    cache['compartments'] = getCompartments(tree)
-    cache['species'] = getSpecies(tree)
-    cache['reactions'] = getReactions(tree)
-
-    pprint(cache)
 
 def getSpeciesAliases(tree):
+    """Returns species aliases used in a CellDesigner file."""
 
     speciesAliases = {}
 
     annotation = tree.model.annotation
-    loSpeciesAliases = annotation.findall('.//celldesigner:listOfSpeciesAliases', namespaces=tree.nsmap)[0]
+    loSpeciesAliases = annotation.findall(
+        './/celldesigner:listOfSpeciesAliases', namespaces=tree.nsmap)[0]
 
     for speciesAlias in loSpeciesAliases.getchildren():
         id = speciesAlias.get('id')
@@ -33,11 +21,15 @@ def getSpeciesAliases(tree):
 
     return speciesAliases
 
+
 def getProteins(tree):
+    """Returns Proteins used in the CellDesigner file."""
+
     proteins = {}
 
     annotation = tree.model.annotation
-    loProteins = annotation.findall('.//celldesigner:listOfProteins', namespaces=tree.nsmap)[0]
+    loProteins = annotation.findall(
+        './/celldesigner:listOfProteins', namespaces=tree.nsmap)[0]
 
     for protein in loProteins.getchildren():
         id = protein.get('id')
@@ -48,11 +40,13 @@ def getProteins(tree):
             "name": name,
             "type": Type
         }
-    
+
     return proteins
 
+
 def getCompartments(tree):
-    
+    """Returns Compartments used in a CellDesigner file."""
+
     compartments = {}
 
     loCompartments = tree.findall('.//listOfCompartments', tree.nsmap)[0]
@@ -67,7 +61,10 @@ def getCompartments(tree):
 
     return compartments
 
+
 def getSpecies(tree):
+    """Returns Species used in a CellDesigner file."""
+
     species = {}
 
     loSpecies = tree.findall('.//listOfSpecies', tree.nsmap)[0]
@@ -87,13 +84,16 @@ def getSpecies(tree):
         }
 
         if Class == 'PROTEIN':
-            proteinReference = sp.findall('.//celldesigner:proteinReference', tree.nsmap)[0]
-        
+            proteinReference = sp.findall(
+                './/celldesigner:proteinReference', tree.nsmap)[0]
+
             species[id]['proteinReference'] = proteinReference
 
     return species
 
+
 def getReactions(tree):
+    """Returns Reactions from a CellDesigner file."""
 
     reactions = {}
 
@@ -104,28 +104,64 @@ def getReactions(tree):
         id = rxn.get('id')
         reversible = rxn.get('reversible')
         fast = rxn.get('fast')
-        reactionType = rxn.findall('.//celldesigner:reactionType', tree.nsmap)[0]
+        reactionType = rxn.findall(
+            './/celldesigner:reactionType', tree.nsmap)[0]
 
-        loBaseReactants = rxn.findall('.//celldesigner:baseReactants', tree.nsmap)[0]
-        baseReactants = []
+        loBaseReactants = rxn.findall(
+            './/celldesigner:baseReactants', tree.nsmap)[0]
+        baseReactants = {}
 
         for reactant in loBaseReactants.getchildren():
-            baseReactants.append({
-                'species': reactant.get('species'),
-                'alias': reactant.get('alias')
-            })
+            species = reactant.get('species')
+            alias = reactant.get('alias')
 
-        loBaseProducts = rxn.findall('.//celldesigner:baseProducts', tree.nsmap)[0]
-        baseProducts = []
+            baseReactants[alias] = {
+                'species': species
+            }
+
+        loReactants = rxn.findall('.//listOfReactants', tree.nsmap)[0]
+        reactants = {}
+
+        for reactant in loReactants.getchildren():
+            species = reactant.get('species')
+            stoichiometry = reactant.get('stoichiometry')
+            alias = reactant.findall(
+                './/celldesigner:alias', tree.nsmap)[0].text
+
+            reactants[alias] = {
+                'species': species,
+                'stoichiometry': stoichiometry
+            }
+
+        loBaseProducts = rxn.findall(
+            './/celldesigner:baseProducts', tree.nsmap)[0]
+        baseProducts = {}
 
         for product in loBaseProducts.getchildren():
-            baseProducts.append({
-                'species': product.get('species'),
-                'alias': product.get('alias')
-            })
+            species = product.get('species')
+            alias = product.get('alias')
 
-        connectPolicy = rxn.findall('.//celldesigner:connectScheme', tree.nsmap)[0].get('connectPolicy')
-        
+            baseProducts[alias] = {
+                'species': species
+            }
+
+        loProducts = rxn.findall('.//listOfProducts', tree.nsmap)[0]
+        products = {}
+
+        for product in loProducts.getchildren():
+            species = product.get('species')
+            stoichiometry = product.get('stoichiometry')
+            alias = product.findall(
+                './/celldesigner:alias', tree.nsmap)[0].text
+
+            products[alias] = {
+                'species': species,
+                'stoichiometry': stoichiometry
+            }
+
+        connectPolicy = rxn.findall(
+            './/celldesigner:connectScheme', tree.nsmap)[0].get('connectPolicy')
+
         reactions[id] = {
             'metaid': metaid,
             'reversible': reversible,
@@ -133,9 +169,9 @@ def getReactions(tree):
             'reactionType': reactionType,
             'baseReactants': baseReactants,
             'baseProducts': baseProducts,
+            'reactants': reactants,
+            'products': products,
             'connectPolicy': connectPolicy
         }
 
     return reactions
-
-main()
