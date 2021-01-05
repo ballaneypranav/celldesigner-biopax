@@ -2,6 +2,10 @@ from lxml import objectify
 from lxml import etree
 from pprint import pprint
 
+BP  = 'http://www.biopax.org/release/biopax-level3.owl#'
+OWL = 'http://www.w3.org/2002/07/owl#'
+RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+
 def main():
 
     with open('sim1.xml', 'rb') as file:
@@ -18,8 +22,14 @@ def main():
 
     owl = getOwlModel()
 
+    addCellularLocationVocabularies(owl, cache)
+    addProteins(owl, cache)
+
     owl_string = str(etree.tostring(owl, pretty_print=True), encoding='UTF8')
     print(owl_string)
+
+    with open('sim1-converted.owl', 'w') as file:
+        file.write(owl_string)
 
 
 def getSpeciesAliases(tree):
@@ -144,25 +154,73 @@ def getReactions(tree):
 
     return reactions
 
+def getElement(name, namespace):
+    return etree.Element('{' + namespace + '}' + name)
+
 def getOwlModel():
     owl_nsmap = {
         None  : 'http://www.pantherdb.org/pathways/biopax#',
-        'rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-        'owl' : 'http://www.w3.org/2002/07/owl#',
+        'rdf' : RDF,
+        'owl' : OWL,
         'xsd' : 'http://www.w3.org/2001/XMLSchema#',
-        'bp'  : 'http://www.biopax.org/release/biopax-level3.owl#'
+        'bp'  : BP
     }
 
     owl = etree.Element("RDF", nsmap = owl_nsmap)
-    owl.tag = '{' + owl.nsmap['rdf'] + '}RDF'
+    owl.tag = '{' + RDF + '}RDF'
 
-    ontology = etree.Element("{%s}Ontology" % owl.nsmap['owl'])
+    ontology = getElement('Ontology', OWL)
 
     owl.append(ontology)
-    imports = etree.Element("{%s}imports" % owl.nsmap['owl'])
-    imports.set("{%s}resource" % owl.nsmap['rdf'], owl.nsmap['bp'])
+    imports = getElement('imports', OWL)
+    imports.set("{%s}resource" % RDF, BP)
     ontology.append(imports)
 
     return owl
+
+def addCellularLocationVocabularies(owl, cache):
+    compartments = cache['compartments']
+
+    for key, value in compartments.items():
+        cellularLocationVocabulary = getElement('CellularLocationVocabulary', BP)
+        cellularLocationVocabulary.set("{%s}ID" % RDF, key)
+
+        owl.append(cellularLocationVocabulary)
+
+def addProteins(owl, cache):
+
+    for proteinReference, desc in cache['proteins'].items():
+
+        # consolidate protein data from cache
+        for sp in cache['species']:
+            if cache['species'][sp]['proteinReference'] == proteinReference:
+                desc['speciesID'] = sp
+                desc['compartment'] = cache['species'][sp]['compartment']
+                break
+        for alias in cache['speciesAliases']:
+            if cache['speciesAliases'][alias]['species'] == desc['speciesID']:
+                desc['speciesAliasID'] = alias
+                break
+
+        desc['rdf:ID'] = desc['name'] + '_' + desc['speciesID'] + '_' + desc['speciesAliasID']
+
+        protein = getElement('Protein', BP)
+        protein.set("{%s}ID" % RDF, desc['rdf:ID'])
+
+        displayName = getElement('displayName', BP)
+        displayName.text = cache['proteins'][proteinReference]['name']
+        displayName.set("{%s}datatype" % RDF, "xsd:string")
+        protein.append(displayName)
+
+        standardName = getElement('standardName', BP)
+        standardName.text = cache['proteins'][proteinReference]['name']
+        standardName.set("{%s}datatype" % RDF, "xsd:string")
+        protein.append(standardName)
+
+        cellularLocation = getElement('cellularLocation', BP)
+        cellularLocation.set("{%s}resource" % RDF, '#' + desc['compartment'])
+        protein.append(cellularLocation)
+
+        owl.append(protein)
 
 main()

@@ -1,0 +1,16 @@
+<rdf:RDF xmlns="http://www.pantherdb.org/pathways/biopax#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+  <owl:Ontology>
+    <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#"/>
+  </owl:Ontology>
+  <bp:CellularLocationVocabulary rdf:ID="default"/>
+  <bp:Protein rdf:ID="A_s1_sa1">
+    <bp:displayName rdf:datatype="xsd:string">A</bp:displayName>
+    <bp:standardName rdf:datatype="xsd:string">A</bp:standardName>
+    <bp:cellularLocation rdf:resource="#default"/>
+  </bp:Protein>
+  <bp:Protein rdf:ID="B_s2_sa2">
+    <bp:displayName rdf:datatype="xsd:string">B</bp:displayName>
+    <bp:standardName rdf:datatype="xsd:string">B</bp:standardName>
+    <bp:cellularLocation rdf:resource="#default"/>
+  </bp:Protein>
+</rdf:RDF>

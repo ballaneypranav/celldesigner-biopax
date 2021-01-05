@@ -4,15 +4,43 @@
     <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
   </owl:Ontology>
 
-  <bp:RelationshipTypeVocabulary rdf:about="CELLDESIGNER_REACTION_TYPE=STATE_TRANSITION">
-    <bp:term rdf:datatype="xsd:string">STATE_TRANSITION</bp:term>
-  </bp:RelationshipTypeVocabulary>
+  <bp:CellularLocationVocabulary rdf:ID="__default_">
+    <bp:comment rdf:datatype="xsd:string">_</bp:comment>
+  </bp:CellularLocationVocabulary>
 
+  <bp:Protein rdf:ID="_B_s2_sa2_">
+    <bp:displayName rdf:datatype="xsd:string">B</bp:displayName>
+    <bp:cellularLocation rdf:resource="#__default_" />
+    <bp:standardName rdf:datatype="xsd:string">B</bp:standardName>
+  </bp:Protein>
+
+  <bp:Protein rdf:ID="_A_s1_sa1_">
+    <bp:displayName rdf:datatype="xsd:string">A</bp:displayName>
+    <bp:cellularLocation rdf:resource="#__default_" />
+    <bp:standardName rdf:datatype="xsd:string">A</bp:standardName>
+  </bp:Protein>
+  
   <bp:SmallMolecule rdf:ID="_s3_s3_sa3_">
     <bp:displayName rdf:datatype="xsd:string">s3</bp:displayName>
     <bp:cellularLocation rdf:resource="#__default_" />
     <bp:standardName rdf:datatype="xsd:string">s3</bp:standardName>
   </bp:SmallMolecule>
+
+  <bp:RelationshipTypeVocabulary rdf:about="CELLDESIGNER_REACTION_TYPE=STATE_TRANSITION">
+    <bp:term rdf:datatype="xsd:string">STATE_TRANSITION</bp:term>
+  </bp:RelationshipTypeVocabulary>
+
+  <bp:InteractionVocabulary rdf:about="CELLDESIGNER_INTERACTION_VOCABULARY=STATE_TRANSITION">
+    <bp:term rdf:datatype="xsd:string">STATE_TRANSITION</bp:term>
+  </bp:InteractionVocabulary>
+
+  <bp:RelationshipXref rdf:about="STATE_TRANSITION">
+    <bp:relationshipType rdf:resource="CELLDESIGNER_REACTION_TYPE=STATE_TRANSITION" />
+  </bp:RelationshipXref>
+
+  <bp:Pathway rdf:ID="_">
+    <bp:pathwayComponent rdf:resource="#STATE_TRANSITION_LEFT__A-RIGHT__B-_re1" />
+  </bp:Pathway>
 
   <bp:BiochemicalReaction rdf:ID="STATE_TRANSITION_LEFT__A-RIGHT__B-_re1">
     <bp:right rdf:resource="#_B_s2_sa2_" />
@@ -25,12 +53,6 @@
     <bp:conversionDirection rdf:datatype="xsd:string">LEFT_TO_RIGHT</bp:conversionDirection>
   </bp:BiochemicalReaction>
 
-  <bp:Protein rdf:ID="_B_s2_sa2_">
-    <bp:displayName rdf:datatype="xsd:string">B</bp:displayName>
-    <bp:cellularLocation rdf:resource="#__default_" />
-    <bp:standardName rdf:datatype="xsd:string">B</bp:standardName>
-  </bp:Protein>
-
   <bp:Stoichiometry rdf:ID="_s3_s3_sa3__STOICHIOMETRY_ID">
     <bp:physicalEntity rdf:resource="#_s3_s3_sa3_" />
     <bp:stoichiometricCoefficient rdf:datatype="xsd:float">1.0</bp:stoichiometricCoefficient>
@@ -41,24 +63,10 @@
     <bp:stoichiometricCoefficient rdf:datatype="xsd:float">1.0</bp:stoichiometricCoefficient>
   </bp:Stoichiometry>
 
-  <bp:CellularLocationVocabulary rdf:ID="__default_">
-    <bp:comment rdf:datatype="xsd:string">_</bp:comment>
-  </bp:CellularLocationVocabulary>
-
-  <bp:Protein rdf:ID="_A_s1_sa1_">
-    <bp:displayName rdf:datatype="xsd:string">A</bp:displayName>
-    <bp:cellularLocation rdf:resource="#__default_" />
-    <bp:standardName rdf:datatype="xsd:string">A</bp:standardName>
-  </bp:Protein>
-
   <bp:Stoichiometry rdf:ID="_A_s1_sa1__STOICHIOMETRY_ID">
     <bp:physicalEntity rdf:resource="#_A_s1_sa1_" />
     <bp:stoichiometricCoefficient rdf:datatype="xsd:float">1.0</bp:stoichiometricCoefficient>
   </bp:Stoichiometry>
-
-  <bp:Pathway rdf:ID="_">
-    <bp:pathwayComponent rdf:resource="#STATE_TRANSITION_LEFT__A-RIGHT__B-_re1" />
-  </bp:Pathway>
 
   <bp:Stoichiometry rdf:ID="PARTICIPANT_STOICHIOMETRY_re1_1">
     <bp:physicalEntity rdf:resource="#_A_s1_sa1_" />
@@ -70,11 +78,4 @@
     <bp:stoichiometricCoefficient rdf:datatype="xsd:float">1.0</bp:stoichiometricCoefficient>
   </bp:Stoichiometry>
 
-  <bp:InteractionVocabulary rdf:about="CELLDESIGNER_INTERACTION_VOCABULARY=STATE_TRANSITION">
-    <bp:term rdf:datatype="xsd:string">STATE_TRANSITION</bp:term>
-  </bp:InteractionVocabulary>
-
-  <bp:RelationshipXref rdf:about="STATE_TRANSITION">
-    <bp:relationshipType rdf:resource="CELLDESIGNER_REACTION_TYPE=STATE_TRANSITION" />
-  </bp:RelationshipXref>
 </rdf:RDF>
