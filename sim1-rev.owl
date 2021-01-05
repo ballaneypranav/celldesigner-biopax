@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns="http://www.pantherdb.org/pathways/biopax#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#"
+ xml:base="http://www.pantherdb.org/pathways/biopax#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:RelationshipTypeVocabulary rdf:about="CELLDESIGNER_REACTION_TYPE=STATE_TRANSITION">
+ <bp:term rdf:datatype = "xsd:string">STATE_TRANSITION</bp:term>
+</bp:RelationshipTypeVocabulary>
+
+<bp:SmallMolecule rdf:ID="_s3_s3_sa3_">
+ <bp:standardName rdf:datatype = "xsd:string">s3</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">s3</bp:displayName>
+ <bp:cellularLocation rdf:resource="#__default_" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:ID="STATE_TRANSITION_LEFT__A-RIGHT__B-_re1">
+ <bp:xref rdf:resource="STATE_TRANSITION" />
+ <bp:interactionType rdf:resource="CELLDESIGNER_INTERACTION_VOCABULARY=STATE_TRANSITION" />
+ <bp:standardName rdf:datatype = "xsd:string">STATE_TRANSITION_LEFT__A-RIGHT__B-_re1</bp:standardName>
+ <bp:left rdf:resource="#_A_s1_sa1_" />
+ <bp:conversionDirection rdf:datatype = "xsd:string">REVERSIBLE</bp:conversionDirection>
+ <bp:right rdf:resource="#_B_s2_sa2_" />
+ <bp:participantStoichiometry rdf:resource="#PARTICIPANT_STOICHIOMETRY_re1_1" />
+ <bp:participantStoichiometry rdf:resource="#PARTICIPANT_STOICHIOMETRY_re1_2" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:ID="_B_s2_sa2_">
+ <bp:standardName rdf:datatype = "xsd:string">B</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">B</bp:displayName>
+ <bp:cellularLocation rdf:resource="#__default_" />
+</bp:Protein>
+
+<bp:Stoichiometry rdf:ID="_s3_s3_sa3__STOICHIOMETRY_ID">
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+ <bp:physicalEntity rdf:resource="#_s3_s3_sa3_" />
+</bp:Stoichiometry>
+
+<bp:Stoichiometry rdf:ID="_B_s2_sa2__STOICHIOMETRY_ID">
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+ <bp:physicalEntity rdf:resource="#_B_s2_sa2_" />
+</bp:Stoichiometry>
+
+<bp:CellularLocationVocabulary rdf:ID="__default_">
+ <bp:comment rdf:datatype = "xsd:string">_</bp:comment>
+</bp:CellularLocationVocabulary>
+
+<bp:Protein rdf:ID="_A_s1_sa1_">
+ <bp:standardName rdf:datatype = "xsd:string">A</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">A</bp:displayName>
+ <bp:cellularLocation rdf:resource="#__default_" />
+</bp:Protein>
+
+<bp:Stoichiometry rdf:ID="_A_s1_sa1__STOICHIOMETRY_ID">
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+ <bp:physicalEntity rdf:resource="#_A_s1_sa1_" />
+</bp:Stoichiometry>
+
+<bp:Pathway rdf:ID="_">
+ <bp:pathwayComponent rdf:resource="#STATE_TRANSITION_LEFT__A-RIGHT__B-_re1" />
+</bp:Pathway>
+
+<bp:Stoichiometry rdf:ID="PARTICIPANT_STOICHIOMETRY_re1_1">
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+ <bp:physicalEntity rdf:resource="#_A_s1_sa1_" />
+</bp:Stoichiometry>
+
+<bp:Stoichiometry rdf:ID="PARTICIPANT_STOICHIOMETRY_re1_2">
+ <bp:stoichiometricCoefficient rdf:datatype = "xsd:float">1.0</bp:stoichiometricCoefficient>
+ <bp:physicalEntity rdf:resource="#_B_s2_sa2_" />
+</bp:Stoichiometry>
+
+<bp:InteractionVocabulary rdf:about="CELLDESIGNER_INTERACTION_VOCABULARY=STATE_TRANSITION">
+ <bp:term rdf:datatype = "xsd:string">STATE_TRANSITION</bp:term>
+</bp:InteractionVocabulary>
+
+<bp:RelationshipXref rdf:about="STATE_TRANSITION">
+ <bp:relationshipType rdf:resource="CELLDESIGNER_REACTION_TYPE=STATE_TRANSITION" />
+</bp:RelationshipXref>
+</rdf:RDF>
