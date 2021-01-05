@@ -8,7 +8,7 @@ from writeBioPAX import *
 
 def main():
 
-    with open('sim1.xml', 'rb') as file:
+    with open('input.xml', 'rb') as file:
         tree = objectify.fromstring(file.read())
 
     # Read the CellDesigner file and build a cache
@@ -38,7 +38,8 @@ def main():
     owl_string = str(etree.tostring(owl, pretty_print=True), encoding='UTF8')
     # print(owl_string)
 
-    with open('sim1-converted.owl', 'w') as file:
+    with open('output.owl', 'w') as file:
         file.write(owl_string)
 
-main()
+if __name__ == "__main__":
+    main()
